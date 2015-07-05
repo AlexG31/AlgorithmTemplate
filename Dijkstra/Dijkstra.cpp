@@ -3,12 +3,41 @@
 #include"vector"
 #include"algorithm"
 #include"utility"
+#include"queue"
 
 using namespace std;
 
+
+typedef int dijk_type;//cost data type
+
+class Node_gpf{
+	int val;
+	int id;
+	public:
+	Node_gpf(int v,int ind):val(v),id(ind){}
+	Node_gpf(const Node_gpf& n1){
+		val=n1.get_val();
+		id=n1.get_id();
+	}
+
+	bool operator <(const Node_gpf& n2) const{
+		return val>n2.val;
+	}
+
+	Node_gpf gain_val(const Node_gpf& n2){
+		Node_gpf n1(val+n2.get_val(),id);
+
+		return n1;
+	}
+	//get id:
+	int get_id()const{return id;}
+	//get val:
+	int get_val()const{return val;}
+
+};
 //Dijkstra Algorithm:
 class Dijkstra_gpf{
-typedef int dijk_type;//cost data type
+
 
 public:
 		//Construct Function
@@ -17,6 +46,9 @@ public:
 			edge=new dijk_type*[Nnode];
 			for(int i=0;i<Nnode;i++){
 				edge[i]=new dijk_type[Nnode];
+				//edgeto init:
+				vector<Node_gpf > tmp;//pair<index,weight>
+				edgeto.push_back(tmp);
 			}
 			//Create dist array:
 			dist=new dijk_type[Nnode];
@@ -33,7 +65,7 @@ public:
 		}
 		 int edge_weight_input(){
 		 	//ToDo..
-			int a,b;	
+			int a,b;
 			cout<<"Please input node index a&b(start with index 1)"<<endl;
 
 			while(scanf("%d%d",&a,&b)==2){
@@ -48,6 +80,22 @@ public:
 				edge[b][a]=val;
 
 				cout<<"Please input node index a&b"<<endl;
+			}
+		 }
+		 int edgeto_input(){
+		 	for(int i=0;i<node_num;i++){
+				int a;
+				cin>>a;
+				for(int j=0;j<a;j++){
+					int b;
+					cin>>b;
+					b--;
+					int val=1;
+					if(j==0)val=0;
+					Node_gpf tnode(val,b);
+
+					edgeto[i].push_back(tnode);
+				}
 			}
 		 }
 
@@ -102,6 +150,39 @@ public:
 
 		 	return dist[ind2]==inf?-1:dist[ind2];
 		 }
+		 dijk_type dijkstra_heap(int ind1,int ind2){
+			priority_queue<Node_gpf >myque;
+
+            dist[ind1]=0;
+            vis[ind1]=true;
+			//add to queue:
+			for(int i=0;i<edgeto[ind1].size();i++){
+
+				myque.push(edgeto[ind1][i]);
+
+			}
+
+			while(!myque.empty()){
+				Node_gpf cur=myque.top();
+				myque.pop();
+				if(vis[cur.get_id()]==true){
+					continue;
+				}
+
+
+				//add cur links to heap
+				int cur_id=cur.get_id();
+				vis[cur_id]=true;
+				//get final distance:
+				dist[cur_id]=cur.get_val();
+
+				for(int i=0;i<edgeto[cur_id].size();i++){
+					myque.push(edgeto[cur_id][i].gain_val(cur));
+				}
+
+			}
+			return dist[ind2];
+		 }
 
 		 ~Dijkstra_gpf(){
 		    //recollect garbage
@@ -118,26 +199,28 @@ private:
 	 dijk_type **edge;//Edge of the graph
 	 dijk_type *dist;//distance from start to sink
 	 bool *vis;
-	 const dijk_type inf; 
+	 const dijk_type inf;
+	 vector<vector<Node_gpf > > edgeto;
 };
 
 
+
 int main(){
-	
-	int ne,nn;	
+
+	int ne,nn;
 	puts("Please input the graph:(nodes and edges)");
 	cin>>nn>>ne;
-	
+
 	Dijkstra_gpf di(ne,nn);
 
-	di.edge_weight_input();
-	
+	di.edgeto_input();
+
 	int s,t;
 	cout<<"Please input dijkstra source & sink:"<<endl;
 
-	cin>>s>>t
-	cout<<"dijkstra distance from "<<s<<" to "<<t<<" is "<<di.dijkstra_n2(s-1,t-1)<<endl;
-		
-	
+	cin>>s>>t;
+	cout<<"dijkstra distance from "<<s<<" to "<<t<<" is "<<di.dijkstra_heap(s-1,t-1)<<endl;
+
+
 	return 0;
 }
