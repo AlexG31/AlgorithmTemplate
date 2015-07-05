@@ -131,10 +131,9 @@ int main(){
 	int s,t;
 	cout<<"Please input dijkstra source & sink:"<<endl;
 
-	while(cin>>s>>t){
-		cout<<"dijkstra distance from "<<s<<" to "<<t<<" is "<<di.dijkstra_n2(s-1,t-1)<<endl;
+	cin>>s>>t
+	cout<<"dijkstra distance from "<<s<<" to "<<t<<" is "<<di.dijkstra_n2(s-1,t-1)<<endl;
 		
-		cout<<"Please input dijkstra source & sink:"<<endl;
-	}
+	
 	return 0;
 }

@@ -58,6 +58,7 @@ public:
 
 			//O(n2) algorithm
 			for(int i=0;i<node_num;i++){
+
 				//rep N times
 				dijk_type min_val=inf;
 				int min_ind=-1;
@@ -73,13 +74,15 @@ public:
 						min_ind=j;
 					}
 				}
+				if(min_ind==-1)break;//No route to sink
 				vis[min_ind]=true;
-
+                //cout<<"rep"<<i<<endl;
 				//found destination:
 				if(vis[ind2]==true){break;}
-			
+
 				//relax dist
 				for(int j=0;j<node_num;j++){
+                    //printf("j=%d,min_ind=%d\n",j,min_ind);
 					if(vis[j]==true)continue;
 					if(edge[min_ind][j]==inf)continue;
 
@@ -96,7 +99,8 @@ public:
 				}
 
 			}
-		 	return dist[ind2];
+
+		 	return dist[ind2]==inf?-1:dist[ind2];
 		 }
 
 		 ~Dijkstra_gpf(){
@@ -131,10 +135,9 @@ int main(){
 	int s,t;
 	cout<<"Please input dijkstra source & sink:"<<endl;
 
-	while(cin>>s>>t){
-		cout<<"dijkstra distance from "<<s<<" to "<<t<<" is "<<di.dijkstra_n2(s-1,t-1)<<endl;
+	cin>>s>>t
+	cout<<"dijkstra distance from "<<s<<" to "<<t<<" is "<<di.dijkstra_n2(s-1,t-1)<<endl;
 		
-		cout<<"Please input dijkstra source & sink:"<<endl;
-	}
+	
 	return 0;
 }
