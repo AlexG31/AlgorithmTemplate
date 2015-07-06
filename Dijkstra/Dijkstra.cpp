@@ -177,7 +177,12 @@ public:
 				dist[cur_id]=cur.get_val();
 
 				for(int i=0;i<edgeto[cur_id].size();i++){
-					myque.push(edgeto[cur_id][i].gain_val(cur));
+					Node_gpf tmp(edgeto[cur_id][i].gain_val(cur));
+
+					if(vis[tmp.get_id()]==true){continue;}
+					if(dist[tmp.get_id()]==inf||dist[tmp.get_id()]>tmp.get_val()){
+					myque.push(tmp);
+					}
 				}
 
 			}
